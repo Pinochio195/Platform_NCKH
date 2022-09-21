@@ -6,19 +6,23 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rigidbodyPlayer;
     private float Player_MoveX;
+    public float Jump;
+    public float MoveDistance;
 
     private void Start()
     {
-        Get_InputMovePlayer();
     }
 
     private void Update()
     {
-        Check_InputMovePlayer();
+        Get_InputMovePlayer();
+        Player_Flip();
+        Player_Jump();
     }
 
     private void FixedUpdate()
     {
+        Check_InputMovePlayer();
     }
 
     private void Get_InputMovePlayer()
@@ -28,6 +32,22 @@ public class PlayerController : MonoBehaviour
 
     private void Check_InputMovePlayer()
     {
-        rigidbodyPlayer.velocity = new Vector2(Player_MoveX * 15, rigidbodyPlayer.velocity.y);
+        rigidbodyPlayer.velocity = new Vector2(Player_MoveX * MoveDistance, rigidbodyPlayer.velocity.y);
+    }
+
+    private void Player_Flip()
+    {
+        if (!Mathf.Approximately(Player_MoveX, 0))
+        {
+            transform.rotation = Player_MoveX < 0 ? Quaternion.Euler(0f, 180f, 0f) : Quaternion.identity;
+        }
+    }
+
+    private void Player_Jump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, Jump);
+        }
     }
 }
