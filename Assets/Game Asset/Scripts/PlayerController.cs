@@ -4,15 +4,30 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private Rigidbody2D rigidbodyPlayer;
+    private float Player_MoveX;
+
+    private void Start()
     {
-        
+        Get_InputMovePlayer();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        Check_InputMovePlayer();
+    }
+
+    private void FixedUpdate()
+    {
+    }
+
+    private void Get_InputMovePlayer()
+    {
+        Player_MoveX = Input.GetAxis("Horizontal");
+    }
+
+    private void Check_InputMovePlayer()
+    {
+        rigidbodyPlayer.velocity = new Vector2(Player_MoveX * 15, rigidbodyPlayer.velocity.y);
     }
 }
