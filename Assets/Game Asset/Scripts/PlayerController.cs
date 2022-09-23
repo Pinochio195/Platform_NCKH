@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rigidbodyPlayer;
+    [SerializeField] private Animator animatorPLayer;
     private float Player_MoveX;
     public float Jump;
     public float MoveDistance;
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
         Get_InputMovePlayer();
         Player_Flip();
         Player_Jump();
+        Player_AnimationsMove();
     }
 
     private void FixedUpdate()
@@ -48,6 +50,18 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, Jump);
+        }
+    }
+
+    private void Player_AnimationsMove()
+    {
+        if (Player_MoveX != 0)
+        {
+            animatorPLayer.SetBool("RunPlayer", true);
+        }
+        else
+        {
+            animatorPLayer.SetBool("RunPlayer", false);
         }
     }
 }
