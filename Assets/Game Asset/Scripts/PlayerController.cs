@@ -6,12 +6,29 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rigidbodyPlayer;
     [SerializeField] private Animator animatorPLayer;
+    [SerializeField] private LayerMask WhatIsGround;
+    [SerializeField] private BoxCollider2D boxColliderPlayer;
+    private float DistanceRadius = .3f;
+    private float DistanceRadiusLeft;
+    [SerializeField] private Transform Trans_GroundCheckJump;
+    private bool isCheckGround;
+    public bool check;
+
+    //
     private float Player_MoveX;
-    public float Jump;
-    public float MoveDistance;
+
+    public float PlayerJump;
+    public float PlayerSpeed;
+
+    //
+    private int NumberJump = 2;
+
+    private int NumberJumpLeft;
 
     private void Start()
     {
+        NumberJumpLeft = NumberJump;
+        DistanceRadiusLeft = DistanceRadius;
     }
 
     private void Update()
@@ -29,12 +46,12 @@ public class PlayerController : MonoBehaviour
 
     private void Get_InputMovePlayer()
     {
-        Player_MoveX = Input.GetAxis("Horizontal");
+        Player_MoveX = Input.GetAxisRaw("Horizontal");
     }
 
     private void Check_InputMovePlayer()
     {
-        rigidbodyPlayer.velocity = new Vector2(Player_MoveX * MoveDistance, rigidbodyPlayer.velocity.y);
+        rigidbodyPlayer.velocity = new Vector2(Player_MoveX * PlayerSpeed, rigidbodyPlayer.velocity.y);
     }
 
     private void Player_Flip()
@@ -47,9 +64,17 @@ public class PlayerController : MonoBehaviour
 
     private void Player_Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        Player_CheckGroundJump();
+
+        if (Input.GetKeyDown(KeyCode.Space) && NumberJumpLeft > 0)
         {
-            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, Jump);
+            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, PlayerJump);
+            NumberJumpLeft--;
+            animatorPLayer.SetFloat("Jump", rigidbodyPlayer.velocity.y);
+        }
+        if (isCheckGround && rigidbodyPlayer.velocity.y <= 0)
+        {
+            NumberJumpLeft = NumberJump;
         }
     }
 
@@ -63,5 +88,18 @@ public class PlayerController : MonoBehaviour
         {
             animatorPLayer.SetBool("RunPlayer", false);
         }
+        animatorPLayer.SetBool("isGroundJump", isCheckGround);
+        animatorPLayer.SetFloat("Jump", rigidbodyPlayer.velocity.y);
+    }
+
+    private void Player_CheckGroundJump()
+    {
+        //isCheckGround = Physics2D.OverlapCircle(Trans_GroundCheckJump.position, DistanceRadiusLeft, WhatIsGround);
+        isCheckGround = boxColliderPlayer.IsTouchingLayers(LayerMask.GetMask("Ground"));
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(Trans_GroundCheckJump.position, DistanceRadiusLeft);
     }
 }
